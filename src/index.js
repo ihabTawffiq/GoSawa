@@ -1,15 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import store from "./server/store";
-
+import Login from "./Components/Login/login";
+import AddAdmin from "./Forms/Add/AddAdmin/addAdmin"
+import AddRoute from "./Forms/Add/AddRoute/addRoute"
 store.firebaseAuthIsReady.then(() => {
   ReactDOM.render(
     <Provider store={store}>
-      <App />
+      {/* <App />*/}
+      {/*<Login />*/}
+      {/*<AddAdmin />*/}
+      <AddRoute />
     </Provider>,
     document.getElementById("root")
   );
