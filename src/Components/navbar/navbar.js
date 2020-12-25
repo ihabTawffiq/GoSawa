@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-
+import { connect } from "react-redux";
+import { signOut } from "../../server/actions/authActions";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -13,25 +14,63 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Nav() {
+function Nav(props) {
+  const { auth, admin, owner, SignOut } = props;
   return (
     <nav>
       <div className="nav-wrapper">
-        <a href="#" className="brand-logo">
-          Logo
+        <a href="/" className="brand-logo">
+          GO SAWA
         </a>
         <ul id="nav-mobile" className="right ">
-          <li>
-            <a href="sass.html">Sass</a>
-          </li>
-          <li>
-            <a href="badges.html">Components</a>
-          </li>
-          <li>
-            <a href="collapsible.html">JavaScript</a>
-          </li>
+          {owner ? (
+            <li>
+              <a href="/add-admin">Add Admin</a>
+            </li>
+          ) : null}
+
+          {owner || admin ? (
+            <li>
+              <a href="/add-route">Add Route</a>
+            </li>
+          ) : null}
+
+          {auth.uid ? (
+            <li>
+              <a
+                href="/#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  SignOut();
+                }}
+              >
+                Logout
+              </a>
+            </li>
+          ) : (
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
   );
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SignOut: (id) => dispatch(signOut(id)),
+    // search: data => {
+    //   dispatch(saveSearchStudents(data));
+    // },
+  };
+};
+const mapState = (state) => {
+  return {
+    auth: state.firebase.auth,
+
+    owner: state.auth.owner,
+    admin: state.auth.admin,
+  };
+};
+export default connect(mapState, mapDispatchToProps)(Nav);

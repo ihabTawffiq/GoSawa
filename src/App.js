@@ -6,34 +6,37 @@ import Home from "./Components/Home/home";
 import store from "./server/store";
 import Login from "./Components/Login/login";
 import AddAdmin from "./Forms/Add/AddAdmin/addAdmin";
+import { connect } from "react-redux";
+
 import AddRoute from "./Forms/Add/AddRoute/addRoute";
 import Nav from "./Components/navbar/navbar";
-function App() {
+function App(props) {
+  const { auth, admin, owner } = props;
   return (
     <BrowserRouter>
       <div className="App">
-        <nav></nav>
+        <Nav></Nav>
         <Switch>
           <ComponentGuard exact path="/" component={Home} authRules={true} />
           <ComponentGuard
             exact
             path="/login"
             component={Login}
-            authRules={true}
+            authRules={!auth.uid}
             redirectPath={"/"}
           />
           <ComponentGuard
             exact
             path="/add-admin"
             component={AddAdmin}
-            authRules={true}
+            authRules={owner}
             redirectPath={"/"}
           />
           <ComponentGuard
             exact
             path="/add-route"
             component={AddRoute}
-            authRules={true}
+            authRules={owner || admin}
             redirectPath={"/"}
           />
         </Switch>
@@ -41,5 +44,12 @@ function App() {
     </BrowserRouter>
   );
 }
+const mapState = (state) => {
+  return {
+    auth: state.firebase.auth,
 
-export default App;
+    admin: state.auth.admin,
+    owner: state.auth.owner,
+  };
+};
+export default connect(mapState)(App);
