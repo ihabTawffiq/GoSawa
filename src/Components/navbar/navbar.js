@@ -1,42 +1,37 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ComponentGuard from "../guards/ComponentGuard";
-import Login from "../Login/login";
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
 }));
 
-export default function ButtonAppBar() {
-    const classes = useStyles();
-
-    return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar>
-                    <ComponentGuard
-                        exact
-                        path="/login"
-                        component={Login}
-                        authRules={!decode}
-                        redirectPath={"/home"}
-                    />
-                </Toolbar>
-            </AppBar>
-        </div>
-    );
+export default function Nav() {
+  return (
+    <nav>
+      <div className="nav-wrapper">
+        <a href="#" className="brand-logo">
+          Logo
+        </a>
+        <ul id="nav-mobile" className="right ">
+          <li>
+            <a href="sass.html">Sass</a>
+          </li>
+          <li>
+            <a href="badges.html">Components</a>
+          </li>
+          <li>
+            <a href="collapsible.html">JavaScript</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
 }

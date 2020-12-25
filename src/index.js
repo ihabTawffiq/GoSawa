@@ -13,7 +13,7 @@ store.firebaseAuthIsReady.then(() => {
       {/* <App />*/}
       {/*<Login />*/}
       {/*<AddAdmin />*/}
-      <AddRoute />
+      <App />
     </Provider>,
     document.getElementById("root")
   );
