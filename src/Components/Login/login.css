@@ -2,12 +2,13 @@
 {
     margin-top: 100px ;
     width: 100%;
+    border: 0px solid black;
 }
 .login-form
 {
     background-color: antiquewhite;
     min-width: 360px;
     min-height: 60vh;
-    border: 1px solid black;
+    
     padding: 150px 20px 50px 20px;
 }

@@ -4,6 +4,8 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from "@material-ui/core/Grid";
 import "./addAdmin.css";
 import swal from "sweetalert";
@@ -22,8 +24,7 @@ const columns = [
     sortable: false,
     width: 160,
     valueGetter: (params) =>
-      `${params.getValue("firstName") || ""} ${
-        params.getValue("lastName") || ""
+      `${params.getValue("firstName") || ""} ${params.getValue("lastName") || ""
       }`,
   },
 ];
@@ -64,6 +65,10 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 export default function SimpleModal() {
@@ -83,6 +88,17 @@ export default function SimpleModal() {
     setOpen(false);
   };
 
+  const [openLoading, setOpenLoading] = React.useState(false);
+
+
+  const handleCloseLoading = () => {
+    setOpenLoading(false);
+  };
+  const handleToggle = () => {
+    setOpenLoading(!openLoading);
+  };
+
+
   const body = (
     <div className="container">
       <Grid container direction="column" justify="center" alignItems="center">
@@ -93,9 +109,11 @@ export default function SimpleModal() {
             justify="center"
             alignItems="center"
             direction="column"
-            spacing="6"
+            spacing="1"
+
+
           >
-            <Grid item>
+            <Grid xs={12} sm={12} item>
               <TextField
                 name="firstname"
                 id="AddAdminFirstName"
@@ -140,14 +158,16 @@ export default function SimpleModal() {
               <Button
                 variant="contained"
                 onClick={(e) => {
+
                   e.preventDefault();
+                  setOpenLoading(!openLoading);
                   addAdmin({
                     phoneNumber: phoneNumber,
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
                   }).then((res) => {
-                    console.log(res.data);
+                    setOpenLoading(false);
                     swal(`admin password is ${res.data.password}`);
                   });
                 }}
@@ -160,6 +180,9 @@ export default function SimpleModal() {
           </Grid>
         </form>
       </Grid>
+      <Backdrop className={classes.backdrop} open={openLoading} onClick={handleCloseLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 

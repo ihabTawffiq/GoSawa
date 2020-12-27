@@ -21,8 +21,9 @@ function BasicTextFields(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
-    <div className="container">
-      <Grid container direction="column" justify="center" alignItems="center">
+
+    <Grid container direction="column" justify="center" alignItems="center">
+      <div className="container">
         <form className="login-form" noValidate autoComplete="off">
           <Grid
             item
@@ -73,8 +74,9 @@ function BasicTextFields(props) {
             </Grid>
           </Grid>
         </form>
-      </Grid>
-    </div>
+      </div>
+    </Grid>
+
   );
 }
 const mapDispatchToProps = (dispatch) => {

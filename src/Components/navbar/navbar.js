@@ -2,6 +2,12 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { signOut } from "../../server/actions/authActions";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -18,42 +24,43 @@ function Nav(props) {
   const { auth, admin, owner, SignOut } = props;
   return (
     <nav>
+
       <div className="nav-wrapper">
-        <a href="/" className="brand-logo">
+        <Link to="/" className="brand-logo">
           GO SAWA
-        </a>
+        </Link>
         <ul id="nav-mobile" className="right ">
           {owner ? (
             <li>
-              <a href="/add-admin">Add Admin</a>
+              <Link to="/add-admin">Add Admin</Link>
             </li>
           ) : null}
 
           {owner || admin ? (
             <li>
-              <a href="/add-route">Add Route</a>
+              <Link to="/add-route">Add Route</Link>
             </li>
           ) : null}
 
           {auth.uid ? (
             <li>
-              <a
-                href="/#"
+              <Link to="/#"
                 onClick={(e) => {
                   e.preventDefault();
                   SignOut();
                 }}
               >
                 Logout
-              </a>
+              </Link>
             </li>
           ) : (
-            <li>
-              <a href="/login">Login</a>
-            </li>
-          )}
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+            )}
         </ul>
       </div>
+
     </nav>
   );
 }
