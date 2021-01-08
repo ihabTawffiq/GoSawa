@@ -6,7 +6,9 @@ import Home from "./Components/Home/home";
 import store from "./server/store";
 import Login from "./Components/Login/login";
 import AddAdmin from "./Forms/Add/AddAdmin/addAdmin";
+import AddCaptain from "./Forms/Add/AddCaptian/addCaptain"
 import { connect } from "react-redux";
+
 
 import AddRoute from "./Forms/Add/AddRoute/addRoute";
 import Nav from "./Components/navbar/navbar";
@@ -36,6 +38,15 @@ function App(props) {
             exact
             path="/add-route"
             component={AddRoute}
+            authRules={owner || admin}
+            redirectPath={"/"}
+          />
+
+
+          <ComponentGuard
+            exact
+            path="/add-captain"
+            component={AddCaptain}
             authRules={owner || admin}
             redirectPath={"/"}
           />

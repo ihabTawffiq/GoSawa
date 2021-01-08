@@ -12,3 +12,22 @@
     
     padding: 150px 20px 50px 20px;
 }
+.add-captain-form
+{
+    margin: 20px auto;
+    padding: 30px;
+    width: 60%;
+
+    background:url("../../background.jpg");
+    background-position: center;
+    background-size: cover;
+}
+@media only screen and (max-width: 600px) {
+    .add-captain-form
+    {
+    margin: 20px auto;
+    padding: 30px;
+
+    width:80%
+    }
+  }

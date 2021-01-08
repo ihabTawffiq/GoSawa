@@ -5,30 +5,36 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-import "./addRoute.css";
+import { InputLabel } from '@material-ui/core';
+import ImageUploader from 'react-images-upload';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import swal from "sweetalert";
+import DataList from "../../../Components/assits/captainLists";
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'startAt', headerName: 'Start At ', width: 130 },
-    { field: 'endAt', headerName: 'End At ', width: 130 },
+    { field: 'name', headerName: 'Capain Name ', width: 130 },
+    { field: 'phone', headerName: 'Captain Phone', width: 130 },
     { field: 'actions', headerName: 'Actions', width: 330 },
 
 
 ];
-// baottot please read this rows from database as routes to show it at table
+// baottot please read this rows from database as Captains to show it at table
 const rows = [
-    { id: 1, endAt: 'Snow', startAd: 'Jon', },
-    { id: 2, endAt: 'Lannister', startAd: 'Cersei', },
-    { id: 3, endAt: 'Lannister', startAd: 'Jaime', },
-    { id: 4, endAt: 'Stark', startAd: 'Arya', },
-    { id: 5, endAt: 'Targaryen', startAd: 'Daenerys', },
-    { id: 6, endAt: 'Melisandre', startAd: null, },
-    { id: 7, endAt: 'Clifford', startAd: 'Ferrara', },
-    { id: 8, endAt: 'Frances', startAd: 'Rossini', },
-    { id: 9, endAt: 'Roxie', startAd: 'Harvey', },
+    { id: 1, name: 'Snow', phone: '01153354849', rides: ["giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal"] },
+    { id: 2, name: 'Lannister', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 3, name: 'Lannister', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 4, name: 'Stark', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 5, name: 'Targaryen', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 6, name: 'Melisandre', phone: null, rides: ["giza", "haram", "faisal"] },
+    { id: 7, name: 'Clifford', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 8, name: 'Frances', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
+    { id: 9, name: 'Roxie', phone: '01153354849', rides: ["giza", "haram", "faisal"] },
 ];
 
 
@@ -51,7 +57,17 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles((theme) => ({
-    paper: {
+
+    formControl: {
+        margin: theme.spacing(1),
+        maxWidth: 420,
+        minWidth: 220,
+        color: "#fff",
+
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    }, paper: {
         position: 'absolute',
         width: 400,
         backgroundColor: theme.palette.background.paper,
@@ -68,13 +84,18 @@ const useStyles = makeStyles((theme) => ({
 export default function SimpleModal() {
     const classes = useStyles();
     // getModalStyle is not a pure function, we roll the style only on the first render
-    const [modalStyle] = React.useState(getModalStyle);
-    const [open, setOpen] = React.useState(false);
-    const [startAtName, setStartAtName] = React.useState("")
-    const [startAtLocation, setStartAtLocation] = React.useState("")
-    const [endAtName, setEndAtName] = React.useState("")
-    const [endAtLocation, setEndAtLocation] = React.useState("")
-    const [finalRoute, setFinalRoute] = React.useState({})
+    const [car, setCar] = React.useState('');
+    const [name, setName] = React.useState("")
+    const [phone, setPhone] = React.useState("")
+    const [idNumber, setIdNumber] = React.useState("")
+    const [licencesfront, setLicencesFront] = React.useState("")
+    const [licencesBack, setLicencesBack] = React.useState("")
+    const [idFront, setIdFront] = React.useState("")
+    const [idBack, setIdBack] = React.useState("")
+    const [fesh, setfesh] = React.useState("")
+
+
+    const [newCaptain, setnewCaptain] = React.useState({})
 
     const [openLoading, setOpenLoading] = React.useState(false);
 
@@ -87,64 +108,204 @@ export default function SimpleModal() {
     };
 
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
 
-    const handleClose = () => {
-        setOpen(false);
+
+
+
+    const handleChangeCar = (event) => {
+        setCar(event.target.value);
     };
-    const handelAddRoute = (e) => {
+    const frontIDUploader = (picture) => {
+        setIdFront(picture)
+        setOpenLoading(!openLoading);
+        console.log(picture)
+
+        //lama t5alas el sho8l sha8al el case de
+        let WorkDone = false
+        if (WorkDone == true) {
+            setOpenLoading(false);
+        }
+
+    }
+    const backIDUploader = (picture) => {
+        setIdBack(picture)
+        setOpenLoading(!openLoading);
+        console.log(picture)
+
+
+        //lama t5alas el sho8l sha8al el case de
+        let WorkDone = false
+        if (WorkDone == true) {
+            setOpenLoading(false);
+        }
+    }
+    const licencesfrontUploader = (picture) => {
+        setLicencesFront(picture)
+        setOpenLoading(!openLoading);
+        console.log(picture)
+
+
+        //lama t5alas el sho8l sha8al el case de
+        let WorkDone = false
+        if (WorkDone == true) {
+            setOpenLoading(false);
+        }
+    }
+    const licencesBackUploader = (picture) => {
+        setLicencesBack(picture)
+        setOpenLoading(!openLoading);
+        console.log(picture)
+
+
+        //lama t5alas el sho8l sha8al el case de
+        let WorkDone = false
+        if (WorkDone == true) {
+            setOpenLoading(false);
+        }
+    }
+    const feshUploader = (picture) => {
+        setfesh(picture)
+        setOpenLoading(!openLoading);
+        console.log(picture)
+
+
+        //lama t5alas el sho8l sha8al el case de
+        let WorkDone = false
+        if (WorkDone == true) {
+            setOpenLoading(false);
+        }
+    }
+
+
+    const handelAddCaptain = (e) => {
         e.preventDefault();
         setOpenLoading(!openLoading);
-        setFinalRoute(
+        setnewCaptain(
             {
-                ...finalRoute,
-                startAtName,
-                startAtLocation,
-                endAtName,
-                endAtLocation
+                ...newCaptain,
+                name,
+                phone,
+                idNumber,
+                licencesfront,
+                licencesBack,
+                idFront,
+                idBack,
+                fesh
             })
-        console.log(finalRoute)
+        console.log(newCaptain)
         //when u finish the request 
         let batotFInish = false
         if (batotFInish) {
             setOpenLoading(false);
-            swal(`Route Created ${finalRoute}`);
+            swal(`Captain Created ${newCaptain.name} `);
         }
     }
-    const body = (
-        <div className="container"  >
+    return (
+        <div>
 
+            <form className={classes.root, "add-captain-form"} noValidate autoComplete="off" style={{}}>
+                <h1>Add New Captain</h1>
+                <FormControl className={classes.formControl}>
+                    <TextField id="name" label="Captain Name" variant="outlined" />
+                </FormControl>
+
+                <FormControl className={classes.formControl}>
+                    <TextField id="Phone" label="Captain Phone" variant="outlined" />
+                </FormControl>
+
+                <FormControl className={classes.formControl}>
+                    <TextField id="idNumber" label="Captain ID number" variant="outlined" />
+                </FormControl>
+
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-label">Select The Car</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={car}
+                        onChange={handleChangeCar}
+                    >
+                        <MenuItem value={"بط528"}>كيا سيراتو ب ط 528</MenuItem>
+                        <MenuItem value={"سض558"}>بي واي دي اف 3 س ض 558</MenuItem>
+                        <MenuItem value={"صع515"}>شيفيروليه اوبترا ص ع 515</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <ImageUploader
+                    withIcon={true}
+                    buttonText='ID Front Face'
+                    label="Upload ID Front IMG"
+                    onChange={frontIDUploader}
+                    imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                    maxFileSize={5242880}
+                    fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+
+                />
+
+
+
+
+                <ImageUploader
+                    withIcon={true}
+                    label="Upload ID Back IMG"
+                    buttonText='ID Front Face'
+                    onChange={backIDUploader}
+                    imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                    maxFileSize={5242880}
+                    fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+                />
+
+
+
+
+                <ImageUploader
+                    withIcon={true}
+                    label="Upload Licences Front IMG"
+                    buttonText='ID Front Face'
+                    onChange={licencesfrontUploader}
+                    imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                    maxFileSize={5242880}
+                    fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+                />
+
+
+
+
+                <ImageUploader
+                    withIcon={true}
+                    label="Upload Licences Back IMG"
+                    buttonText='ID Front Face'
+                    onChange={feshUploader}
+                    imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                    maxFileSize={5242880}
+                    fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+                />
+
+
+
+
+                <ImageUploader
+                    withIcon={true}
+                    label="Upload Criminal newspaper IMG"
+                    buttonText='ID Front Face'
+                    onChange={licencesBackUploader}
+                    imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                    maxFileSize={5242880}
+                    fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+                />
+
+
+                <Button classname="addAdminBTN" variant="contained" onClick={handelAddCaptain} color="primary" disableElevation>
+                    Add New Captain
+                    </Button>
+            </form>
+            <div style={{ height: 400, width: '100%' }}>
+                <DataList datatoshow={rows} columns={columns} pageSize={5} checkboxSelection />
+            </div>
             <Backdrop className={classes.backdrop} open={openLoading} onClick={handleCloseLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-        </div>
-    );
 
-    return (
-        <div>
-            <Grid container
-                direction="column"
-                justify="center"
-                alignItems="center"
-                xs={12}
-            >
-                <div style={{ height: 400, width: '100%' }}>
-                    <Button classname="addAdminBTN" variant="contained" onClick={handleOpen} color="primary" disableElevation>
-                        Add New Route
-                    </Button>
-                    <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
-                </div>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
-                >
-                    {body}
-                </Modal>
-            </Grid>
         </div>
     );
 }

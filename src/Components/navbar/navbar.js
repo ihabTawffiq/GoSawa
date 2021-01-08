@@ -40,6 +40,14 @@ function Nav(props) {
             <li>
               <Link to="/add-route">Add Route</Link>
             </li>
+
+          ) : null}
+
+          {owner || admin ? (
+            <li>
+              <Link to="/add-captain">Add Captain</Link>
+            </li>
+
           ) : null}
 
           {auth.uid ? (

@@ -135,7 +135,7 @@ export default function CheckboxList(datatoshow) {
 
                             <ListItemSecondaryAction>
                                 <Button variant="contained" onClick={handleOpen} color="primary" disableElevation>
-                                    Add New Stations {value.id}
+                                    Add New Stations
                                 </Button>
                             </ListItemSecondaryAction>
                         </ListItem>
