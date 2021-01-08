@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
+import DataList from "../../../Components/assits/listest";
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -20,15 +21,15 @@ const columns = [
 ];
 // baottot please read this rows from database as routes to show it at table
 const rows = [
-    { id: 1, endAt: 'Snow', startAd: 'Jon', },
-    { id: 2, endAt: 'Lannister', startAd: 'Cersei', },
-    { id: 3, endAt: 'Lannister', startAd: 'Jaime', },
-    { id: 4, endAt: 'Stark', startAd: 'Arya', },
-    { id: 5, endAt: 'Targaryen', startAd: 'Daenerys', },
-    { id: 6, endAt: 'Melisandre', startAd: null, },
-    { id: 7, endAt: 'Clifford', startAd: 'Ferrara', },
-    { id: 8, endAt: 'Frances', startAd: 'Rossini', },
-    { id: 9, endAt: 'Roxie', startAd: 'Harvey', },
+    { id: 1, endAt: 'Snow', startAd: 'Jon', stations: ["giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal", "giza", "haram", "faisal"] },
+    { id: 2, endAt: 'Lannister', startAd: 'Cersei', stations: ["giza", "haram", "faisal"] },
+    { id: 3, endAt: 'Lannister', startAd: 'Jaime', stations: ["giza", "haram", "faisal"] },
+    { id: 4, endAt: 'Stark', startAd: 'Arya', stations: ["giza", "haram", "faisal"] },
+    { id: 5, endAt: 'Targaryen', startAd: 'Daenerys', stations: ["giza", "haram", "faisal"] },
+    { id: 6, endAt: 'Melisandre', startAd: null, stations: ["giza", "haram", "faisal"] },
+    { id: 7, endAt: 'Clifford', startAd: 'Ferrara', stations: ["giza", "haram", "faisal"] },
+    { id: 8, endAt: 'Frances', startAd: 'Rossini', stations: ["giza", "haram", "faisal"] },
+    { id: 9, endAt: 'Roxie', startAd: 'Harvey', stations: ["giza", "haram", "faisal"] },
 ];
 
 
@@ -70,6 +71,7 @@ export default function SimpleModal() {
     // getModalStyle is not a pure function, we roll the style only on the first render
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
+    const [openStations, setOpenStations] = React.useState(false);
     const [startAtName, setStartAtName] = React.useState("")
     const [startAtLocation, setStartAtLocation] = React.useState("")
     const [endAtName, setEndAtName] = React.useState("")
@@ -91,11 +93,16 @@ export default function SimpleModal() {
         setOpen(true);
     };
 
+    const handleOpenstations = () => {
+        setOpenStations(true);
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
     const handelAddRoute = (e) => {
         e.preventDefault();
+
         setOpenLoading(!openLoading);
         setFinalRoute(
             {
@@ -112,6 +119,11 @@ export default function SimpleModal() {
             setOpenLoading(false);
             swal(`Route Created ${finalRoute}`);
         }
+    }
+
+    const handelAddStations = (e) => {
+        e.preventDefault();
+        setOpenLoading(!openLoading);
     }
     const body = (
         <div className="container"  >
@@ -196,6 +208,45 @@ export default function SimpleModal() {
         </div>
     );
 
+    const bodyForStations = (
+        <div className="container"  >
+            <Grid container
+                direction="column"
+                justify="center"
+                alignItems="center"
+
+            >
+                <form className="login-form" noValidate autoComplete="off">
+                    <Grid item container
+                        justify="center"
+                        alignItems="center"
+                        direction="column"
+                        spacing="6"
+
+                    >
+
+
+
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disableElevation
+                            onClick={handelAddStations}
+                        >
+                            Submit
+                    </Button>
+
+
+                    </Grid>
+                </form>
+            </Grid>
+            <Backdrop className={classes.backdrop} open={openLoading} onClick={handleCloseLoading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        </div>
+    );
+
     return (
         <div>
             <Grid container
@@ -208,7 +259,10 @@ export default function SimpleModal() {
                     <Button classname="addAdminBTN" variant="contained" onClick={handleOpen} color="primary" disableElevation>
                         Add New Route
                     </Button>
-                    <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
+
+
+                    <DataList datatoshow={rows} columns={columns} pageSize={5} checkboxSelection />
+
                 </div>
                 <Modal
                     open={open}
@@ -217,6 +271,17 @@ export default function SimpleModal() {
                     aria-describedby="simple-modal-description"
                 >
                     {body}
+                </Modal>
+
+
+
+                <Modal
+                    open={openStations}
+                    onClose={handleClose}
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                >
+                    {bodyForStations}
                 </Modal>
             </Grid>
         </div>
