@@ -9,7 +9,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { Redirect } from "react-router-dom";
 
 import CircularProgress from "@material-ui/core/CircularProgress";
-const auth = config.auth();
+const auth2 = config.auth();
 const useStyles = makeStyles((theme) => ({
   root: {
     "& > *": {
@@ -47,7 +47,8 @@ const VerificationPage = (props) => {
             e.preventDefault();
             setOpenLoading(true);
 
-            var user = auth.currentUser;
+            var user = auth2.currentUser;
+            console.log(auth2.currentUser);
             user
               .sendEmailVerification()
               .then(function () {
