@@ -4,13 +4,15 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import "./addAdmin.css";
 import swal from "sweetalert";
 import config from "../../../server/config";
-const functions = config.functions();
+const firestore = config.firestore();
+
+const functions = config.app().functions("europe-west3");
 const addAdmin = functions.httpsCallable("addAdmin");
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -24,9 +26,11 @@ const columns = [
     sortable: false,
     width: 160,
     valueGetter: (params) =>
-      `${params.getValue("firstName") || ""} ${params.getValue("lastName") || ""
+      `${params.getValue("firstName") || ""} ${
+        params.getValue("lastName") || ""
       }`,
   },
+  { field: "email", headerName: "Email", width: 250 },
 ];
 
 const rows = [
@@ -67,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
+    color: "#fff",
   },
 }));
 
@@ -80,6 +84,20 @@ export default function SimpleModal() {
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
+  const [adminsList, setAdminsList] = React.useState([]);
+  React.useEffect(() => {
+    firestore.collection("admins").onSnapshot((snaps) => {
+      const admins = snaps.docs.map((doc, index) => {
+        return {
+          ...doc.data(),
+          uid: doc.id,
+          id: index + 1,
+        };
+      });
+      console.log(admins);
+      setAdminsList(admins);
+    });
+  }, []);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -90,14 +108,12 @@ export default function SimpleModal() {
 
   const [openLoading, setOpenLoading] = React.useState(false);
 
-
   const handleCloseLoading = () => {
     setOpenLoading(false);
   };
   const handleToggle = () => {
     setOpenLoading(!openLoading);
   };
-
 
   const body = (
     <div className="container">
@@ -110,8 +126,6 @@ export default function SimpleModal() {
             alignItems="center"
             direction="column"
             spacing="1"
-
-
           >
             <Grid xs={12} sm={12} item>
               <TextField
@@ -158,7 +172,6 @@ export default function SimpleModal() {
               <Button
                 variant="contained"
                 onClick={(e) => {
-
                   e.preventDefault();
                   setOpenLoading(!openLoading);
                   addAdmin({
@@ -168,7 +181,11 @@ export default function SimpleModal() {
                     email: email,
                   }).then((res) => {
                     setOpenLoading(false);
-                    swal(`admin password is ${res.data.password}`);
+                    if (res.data.errorInfo) swal(res.data.errorInfo.code);
+                    else {
+                      console.log(res.data);
+                      swal(`admin password is ${res.data.password}`);
+                    }
                   });
                 }}
                 color="primary"
@@ -180,7 +197,11 @@ export default function SimpleModal() {
           </Grid>
         </form>
       </Grid>
-      <Backdrop className={classes.backdrop} open={openLoading} onClick={handleCloseLoading}>
+      <Backdrop
+        className={classes.backdrop}
+        open={openLoading}
+        onClick={handleCloseLoading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>
@@ -196,6 +217,8 @@ export default function SimpleModal() {
         xs={12}
       >
         <div style={{ height: 400, width: "100%" }}>
+          <br />
+          <br />
           <Button
             classname="addAdminBTN"
             variant="contained"
@@ -205,8 +228,10 @@ export default function SimpleModal() {
           >
             Add New Admin
           </Button>
+          <br />
+          <br />
           <DataGrid
-            rows={rows}
+            rows={adminsList}
             columns={columns}
             pageSize={5}
             checkboxSelection

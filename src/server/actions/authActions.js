@@ -48,9 +48,9 @@ export const signOut = (uid) => {
       .signOut()
       .then(() => {
         dispatch({ type: "LOGOUT_SUCCESS" });
-        return window.location.assign("/");
       })
       .catch((err) => {
+        console.log(err);
         dispatch({ type: "LOGOUT_ERROR", err });
       });
   };

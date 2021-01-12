@@ -41,15 +41,12 @@ const authreducer = (state = initstate, action) => {
       };
 
     case "LOGOUT_SUCCESS":
-      window.location.assign("/");
-      return {
-        ...state,
-        loginerror: null,
-
-        owner: null,
-        admin: null,
-        profile: {},
-      };
+      setTimeout(() => {
+        window.location.assign(
+          "/"
+        ); /* will be updated to Profile for user,assistant,amrElsafiy */
+      }, 1000);
+      return {};
     case "UPDATE_PASSWORD_FAILED":
       swal(action.error.message);
       return {
