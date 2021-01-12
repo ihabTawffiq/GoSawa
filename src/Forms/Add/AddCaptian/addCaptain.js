@@ -606,7 +606,7 @@ export default function SimpleModal() {
         <ImageUploader
           withIcon={true}
           label="Upload ID Back IMG"
-          buttonText="ID Front Face"
+          buttonText="ID Back Face"
           onChange={backIDUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
@@ -618,7 +618,7 @@ export default function SimpleModal() {
         <ImageUploader
           withIcon={true}
           label="Upload Licences Front IMG"
-          buttonText="ID Front Face"
+          buttonText="Licences Front Face"
           onChange={licencesfrontUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
@@ -630,7 +630,7 @@ export default function SimpleModal() {
         <ImageUploader
           withIcon={true}
           label="Upload Licences Back IMG"
-          buttonText="ID Front Face"
+          buttonText="Licences Back Face"
           onChange={feshUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
@@ -641,7 +641,7 @@ export default function SimpleModal() {
         <ImageUploader
           withIcon={true}
           label="Upload Criminal newspaper IMG"
-          buttonText="ID Front Face"
+          buttonText="Criminal newspaper IMG"
           onChange={licencesBackUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
@@ -660,6 +660,9 @@ export default function SimpleModal() {
           Add New Captain
         </Button>
       </form>
+
+
+
       <div style={{ height: 400, width: "100%" }}>
         {/*
          <DataList
