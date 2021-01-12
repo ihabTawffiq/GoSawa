@@ -1,0 +1,13 @@
+.add-captain-form-header
+{
+    background-color: rgba(10, 1, 10, 0.2);
+    padding: 10px;
+    border-radius: 30px;
+}
+.add-captain-form
+{
+    padding: 50px;
+    margin: 100px auto;
+    border: 2px solid rebeccapurple;
+    border-radius: 60px;
+}

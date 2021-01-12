@@ -6,7 +6,19 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import { InputLabel, Typography } from "@material-ui/core";
-
+import { Fragment } from "react";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import { withStyles } from "@material-ui/core/styles";
+import IconButton from "@material-ui/core/IconButton";
+import AddLocationIcon from "@material-ui/icons/AddLocation";
+import DeleteIcon from "@material-ui/icons/Delete";
+import StreetviewIcon from "@material-ui/icons/Streetview";
+import "./addCaptain.css";
 import ImageUploader from "react-images-upload";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
@@ -39,6 +51,26 @@ const firestore = config.firestore();
 const functions = config.app().functions("europe-west3");
 const storage = config.storage();
 const addCaptain = functions.httpsCallable("addCaptain");
+
+
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: "#2f253b",
+    color: theme.palette.common.white,
+    fontSize: "17px",
+  },
+  body: {
+    fontSize: 15,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    "&:nth-of-type(odd)": {
+      backgroundColor: theme.palette.background.default,
+    },
+  },
+}))(TableRow);
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
   { field: "name", headerName: "Capain Name ", width: 130 },
@@ -183,11 +215,16 @@ export default function SimpleModal() {
   const [fesh, setfesh] = React.useState(null);
   const [captainPic, setCaptainPic] = React.useState(null);
   const [brithDate, setBrithDate] = React.useState(new Date());
+  const [licenceExpireDate, setLicenceExpireDate] = React.useState(new Date());
   const [newCaptain, setnewCaptain] = React.useState({});
   const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
   const [lodingms, setLodingMs] = React.useState("");
   const [openLoading, setOpenLoading] = React.useState(false);
   const [value, setValue] = React.useState("");
+  const [currentRides, setCurrentRides] = React.useState([]);
+  const [currentCaptianID, setCurrentCaptianID] = React.useState();
+
   const useDefaultPhoneInputProps = () => {
     return {
       placeholder: "Enter phone number",
@@ -197,6 +234,95 @@ export default function SimpleModal() {
       country: "US",
     };
   };
+
+
+  const renderTable = (data) => {
+    return (
+      <Fragment>
+        <Paper style={{ overflowX: "scroll" }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="center">NO.</StyledTableCell>
+                <StyledTableCell align="center">Captain Name</StyledTableCell>
+                <StyledTableCell align="center">Captain Phone</StyledTableCell>
+                <StyledTableCell align="center">Captain Rides</StyledTableCell>
+                <StyledTableCell align="center">Add Ride</StyledTableCell>
+                <StyledTableCell align="center">Delete</StyledTableCell>
+
+                {/* <StyledTableCell align="center">Enter Time</StyledTableCell> */}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((record, index) => {
+                return (
+                  <StyledTableRow key={record.routeID}>
+                    <StyledTableCell
+                      style={{ background: "#fff" }}
+                      align="center"
+                    >
+                      {index + 1}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row" align="center">
+                      {record.name}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      style={{ background: "#fff" }}
+                      align="center"
+                    >
+                      {record.phone}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      style={{ background: "#fff" }}
+                      align="center"
+                    >
+                      <IconButton
+                        color="primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentRides(record.rides);
+                          setCurrentCaptianID(record.id);
+
+                          setOpen3(true);
+                        }}
+                      >
+                        <StreetviewIcon></StreetviewIcon>
+                      </IconButton>
+                    </StyledTableCell>
+                    <StyledTableCell
+                      style={{ background: "#fff" }}
+                      align="center"
+                    >
+                      <IconButton
+                        color="primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentCaptianID(record.routeID);
+                          setOpen2(true);
+                        }}
+                      >
+                        <AddLocationIcon></AddLocationIcon>
+                      </IconButton>
+                    </StyledTableCell>
+                    <StyledTableCell
+                      style={{ background: "#fff" }}
+                      align="center"
+                    >
+                      <IconButton color="secondary">
+                        <DeleteIcon></DeleteIcon>{" "}
+                      </IconButton>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      </Fragment>
+    );
+  };
+
+
   const handleCloseLoading = () => {
     setOpenLoading(false);
   };
@@ -353,82 +479,107 @@ export default function SimpleModal() {
         autoComplete="off"
         style={{}}
       >
-        <h1>Add New Captain</h1>
-        <FormControl className={classes.formControl}>
-          <TextField
-            id="name"
-            label="Captain Name"
-            variant="outlined"
-            type="text"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </FormControl>
-        <FormControl className={classes.formControl}>
-          <TextField
-            id="email"
-            label="Captain Email"
-            variant="outlined"
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </FormControl>
+        <div className="add-captain-form-header">
+          <h1>Add New Captain</h1>
+          <FormControl className={classes.formControl}>
+            <TextField
+              id="name"
+              label="Captain Name"
+              variant="outlined"
+              type="text"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <TextField
+              id="email"
+              label="Captain Email"
+              variant="outlined"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
 
-        <FormControl className={classes.formControl}>
-          <TextField
-            id="Phone"
-            label="Captain Phone"
-            variant="outlined"
-            onChange={(e) => setPhone(e.target.value)}
-            type="number"
-          />
-        </FormControl>
+          <FormControl className={classes.formControl}>
+            <TextField
+              id="Phone"
+              label="Captain Phone"
+              variant="outlined"
+              onChange={(e) => setPhone(e.target.value)}
+              type="number"
+            />
+          </FormControl>
 
-        <FormControl className={classes.formControl}>
-          <TextField
-            id="idNumber"
-            label="Captain ID number"
-            variant="outlined"
-            type="number"
-            onChange={(e) => {
-              setIdNumber(e.target.value);
-            }}
-          />
-        </FormControl>
-
-        <FormControl className={classes.formControl}>
-          <InputLabel id="demo-simple-select-label">Select The Car</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={car}
-            onChange={(e) => {
-              setCar(e.target.value);
-            }}
-          >
-            <MenuItem value={"بط528"}>كيا سيراتو ب ط 528</MenuItem>
-            <MenuItem value={"سض558"}>بي واي دي اف 3 س ض 558</MenuItem>
-            <MenuItem value={"صع515"}>شيفيروليه اوبترا ص ع 515</MenuItem>
-          </Select>
-        </FormControl>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Grid container justify="space-around">
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"
-              format="MM/dd/yyyy"
-              margin="normal"
-              id="date-picker-inline"
-              label="BirthDate"
-              value={brithDate}
-              onChange={(date) => {
-                setBrithDate(date);
-              }}
-              KeyboardButtonProps={{
-                "aria-label": "change date",
+          <FormControl className={classes.formControl}>
+            <TextField
+              id="idNumber"
+              label="Captain ID number"
+              variant="outlined"
+              type="number"
+              onChange={(e) => {
+                setIdNumber(e.target.value);
               }}
             />
-          </Grid>
-        </MuiPickersUtilsProvider>
+          </FormControl>
+
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-label">Select The Car</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={car}
+              onChange={(e) => {
+                setCar(e.target.value);
+              }}
+            >
+              <MenuItem value={"بط528"}>كيا سيراتو ب ط 528</MenuItem>
+              <MenuItem value={"سض558"}>بي واي دي اف 3 س ض 558</MenuItem>
+              <MenuItem value={"صع515"}>شيفيروليه اوبترا ص ع 515</MenuItem>
+            </Select>
+          </FormControl>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-around">
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="BirthDate"
+                value={brithDate}
+                onChange={(date) => {
+                  setBrithDate(date);
+                }}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+              />
+            </Grid>
+          </MuiPickersUtilsProvider>
+
+
+
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-around">
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="License Expire Date"
+                value={licenceExpireDate}
+                onChange={(date) => {
+                  setLicenceExpireDate(date);
+                }}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+              />
+            </Grid>
+          </MuiPickersUtilsProvider>
+        </div>
+
         <ImageUploader
           withIcon={true}
           label="Upload Captain Pic"
@@ -436,7 +587,7 @@ export default function SimpleModal() {
           onChange={captainPicUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
           singleImage={true}
         />
@@ -447,7 +598,7 @@ export default function SimpleModal() {
           onChange={frontIDUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
           singleImage={true}
         />
@@ -459,7 +610,7 @@ export default function SimpleModal() {
           onChange={backIDUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
           singleImage={true}
         />
@@ -471,7 +622,7 @@ export default function SimpleModal() {
           onChange={licencesfrontUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
           singleImage={true}
         />
@@ -483,7 +634,7 @@ export default function SimpleModal() {
           onChange={feshUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
         />
 
@@ -494,7 +645,7 @@ export default function SimpleModal() {
           onChange={licencesBackUploader}
           imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
           maxFileSize={5242880}
-          fileContainerStyle={{ background: "rgba(255,255,255,0.3)" }}
+          fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
           singleImage={true}
         />
@@ -510,12 +661,15 @@ export default function SimpleModal() {
         </Button>
       </form>
       <div style={{ height: 400, width: "100%" }}>
-        <DataList
+        {/*
+         <DataList
           datatoshow={rows}
           columns={columns}
           pageSize={5}
           checkboxSelection
         />
+       */}
+        {renderTable(rows)}
       </div>
       <Backdrop
         className={classes.backdrop}
@@ -540,6 +694,57 @@ export default function SimpleModal() {
           <Typography style={{ textAlign: "center" }}>{lodingms}</Typography>
         </DialogContent>
         <DialogActions></DialogActions>
+      </Dialog>
+      <Dialog open={open3} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Stations</DialogTitle>
+        <DialogContent>
+          <Paper style={{ overflowX: "scroll" }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Station Name</StyledTableCell>
+                  <StyledTableCell align="center">Remove</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {currentRides.map((record) => {
+                  return (
+                    <StyledTableRow key={record.stationID}>
+                      <StyledTableCell
+                        style={{ background: "#fff" }}
+                        align="center"
+                      >
+                        {record}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                      >
+                        <IconButton color="secondary">
+                          <DeleteIcon></DeleteIcon>
+                        </IconButton>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentCaptianID("");
+              setCurrentRides([]);
+              setOpen3(false);
+            }}
+            color="secondary"
+          >
+            Cancel
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );
