@@ -11,6 +11,8 @@ import "./addRoute.css";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import swal from "sweetalert";
+import { confirmAlert } from "react-confirm-alert";
+
 import config from "../../../server/config";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -30,10 +32,12 @@ import Paper from "@material-ui/core/Paper";
 import StreetviewIcon from "@material-ui/icons/Streetview";
 const firestore = config.firestore();
 // const functions = config.functions();
-const  functions  = config.app().functions('europe-west3');
+const functions = config.app().functions("europe-west3");
 
-const addRout =  functions.httpsCallable("addRout");
+const addRout = functions.httpsCallable("addRout");
 const addRoutStation = functions.httpsCallable("addRoutStation");
+const deleteRoute = functions.httpsCallable("deleteRoute");
+const deleteRoutStation = functions.httpsCallable("deleteRoutStation2");
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -218,6 +222,35 @@ export default function SimpleModal() {
                     <StyledTableCell
                       style={{ background: "#fff" }}
                       align="center"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        confirmAlert({
+                          title: "Confirm Delete Route",
+                          message: "Are you sure .",
+                          buttons: [
+                            {
+                              label: "Yes",
+                              onClick: () => {
+                                setOpenLoading(true);
+
+                                deleteRoute(record.routeID).then((res) => {
+                                  if (res.data.message) {
+                                    setOpenLoading(false);
+
+                                    swal(res.data.message);
+                                  } else {
+                                    console.log(res.data);
+                                  }
+                                });
+                              },
+                            },
+                            {
+                              label: "No",
+                              onClick: () => {},
+                            },
+                          ],
+                        });
+                      }}
                     >
                       <IconButton color="secondary">
                         <DeleteIcon></DeleteIcon>{" "}
@@ -326,11 +359,7 @@ export default function SimpleModal() {
           </Grid>
         </form>
       </Grid>
-      <Backdrop
-        className={classes.backdrop}
-        open={openLoading}
-        onClick={handleCloseLoading}
-      >
+      <Backdrop className={classes.backdrop} open={openLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>
@@ -543,7 +572,46 @@ export default function SimpleModal() {
                         scope="row"
                         align="center"
                       >
-                        <IconButton color="secondary">
+                        <IconButton
+                          color="secondary"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setOpen3(false);
+                            confirmAlert({
+                              title: "Confirm Delete Route",
+                              message: "Are you sure .",
+                              buttons: [
+                                {
+                                  label: "Yes",
+                                  onClick: () => {
+                                    setOpenLoading(true);
+                                    console.log({
+                                      stationID: record.stationID,
+                                      id: currentrouteID,
+                                    });
+                                    deleteRoutStation({
+                                      stationID: record.stationID,
+                                      id: currentrouteID,
+                                    }).then((res) => {
+                                      if (res.data.message) {
+                                        setOpen3(true);
+                                        setOpenLoading(false);
+
+                                        swal(res.data.message);
+                                      } else {
+                                        console.log(res.data);
+                                      }
+                                    });
+                                  },
+                                },
+                                {
+                                  label: "No",
+                                  onClick: () => {},
+                                },
+                              ],
+                            });
+                          }}
+                        >
                           <DeleteIcon></DeleteIcon>
                         </IconButton>
                       </StyledTableCell>

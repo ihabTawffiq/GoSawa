@@ -11,6 +11,7 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
@@ -40,10 +41,11 @@ import {
   MuiPickersUtilsProvider,
   DateTimePicker,
   KeyboardDatePicker,
+  DatePicker,
 } from "@material-ui/pickers";
 import PhoneInput from "react-phone-number-input";
 import config from "../../../server/config";
-
+import CaptainsTable from "./captainsTable";
 import DateFnsUtils from "@date-io/date-fns";
 import { isFuture } from "date-fns/esm";
 const firestore = config.firestore();
@@ -51,7 +53,6 @@ const firestore = config.firestore();
 const functions = config.app().functions("europe-west3");
 const storage = config.storage();
 const addCaptain = functions.httpsCallable("addCaptain");
-
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -200,6 +201,14 @@ const useStyles = makeStyles((theme) => ({
             </Grid>
           </MuiPickersUtilsProvider>   */
 }
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default function SimpleModal() {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -224,6 +233,21 @@ export default function SimpleModal() {
   const [value, setValue] = React.useState("");
   const [currentRides, setCurrentRides] = React.useState([]);
   const [currentCaptianID, setCurrentCaptianID] = React.useState();
+  const [cars, setCars] = React.useState([]);
+  React.useEffect(() => {
+    firestore
+      .collection("cars")
+      .get()
+      .then((docs) => {
+        const newCars = [];
+        docs.docs.forEach((doc) => {
+          if (doc.data().currentCaptainID === "") {
+            newCars.push({ id: doc.id, ...doc.data() });
+          }
+        });
+        setCars(newCars);
+      });
+  }, []);
 
   const useDefaultPhoneInputProps = () => {
     return {
@@ -234,94 +258,6 @@ export default function SimpleModal() {
       country: "US",
     };
   };
-
-
-  const renderTable = (data) => {
-    return (
-      <Fragment>
-        <Paper style={{ overflowX: "scroll" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">NO.</StyledTableCell>
-                <StyledTableCell align="center">Captain Name</StyledTableCell>
-                <StyledTableCell align="center">Captain Phone</StyledTableCell>
-                <StyledTableCell align="center">Captain Rides</StyledTableCell>
-                <StyledTableCell align="center">Add Ride</StyledTableCell>
-                <StyledTableCell align="center">Delete</StyledTableCell>
-
-                {/* <StyledTableCell align="center">Enter Time</StyledTableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((record, index) => {
-                return (
-                  <StyledTableRow key={record.routeID}>
-                    <StyledTableCell
-                      style={{ background: "#fff" }}
-                      align="center"
-                    >
-                      {index + 1}
-                    </StyledTableCell>
-                    <StyledTableCell component="th" scope="row" align="center">
-                      {record.name}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      style={{ background: "#fff" }}
-                      align="center"
-                    >
-                      {record.phone}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      style={{ background: "#fff" }}
-                      align="center"
-                    >
-                      <IconButton
-                        color="primary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCurrentRides(record.rides);
-                          setCurrentCaptianID(record.id);
-
-                          setOpen3(true);
-                        }}
-                      >
-                        <StreetviewIcon></StreetviewIcon>
-                      </IconButton>
-                    </StyledTableCell>
-                    <StyledTableCell
-                      style={{ background: "#fff" }}
-                      align="center"
-                    >
-                      <IconButton
-                        color="primary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCurrentCaptianID(record.routeID);
-                          setOpen2(true);
-                        }}
-                      >
-                        <AddLocationIcon></AddLocationIcon>
-                      </IconButton>
-                    </StyledTableCell>
-                    <StyledTableCell
-                      style={{ background: "#fff" }}
-                      align="center"
-                    >
-                      <IconButton color="secondary">
-                        <DeleteIcon></DeleteIcon>{" "}
-                      </IconButton>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </Paper>
-      </Fragment>
-    );
-  };
-
 
   const handleCloseLoading = () => {
     setOpenLoading(false);
@@ -342,8 +278,17 @@ export default function SimpleModal() {
   const licencesBackUploader = (picture) => {
     setLicencesBack(picture[0]);
   };
-  const captainPicUploader = (picture) => {
+  const captainPicUploader = async (picture) => {
     setCaptainPic(picture[0]);
+    // console.log(await toBase64(picture[0]));
+    // var img = await toBase64(picture[0]);
+    // await firestore.collection("test").add({
+    //   img: img,
+    // });
+    // var img2 = img.replace(/^data:image\/png;base64,/, "");
+    // console.log(img2);
+    // var img3 = new Buffer.from(img2, "base64");
+    // console.log(img3);
   };
   const feshUploader = (picture) => {
     setfesh(picture[0]);
@@ -351,124 +296,137 @@ export default function SimpleModal() {
 
   const handelAddCaptain = (e) => {
     e.preventDefault();
+    if (
+      name === "" ||
+      phone === "" ||
+      idNumber === "" ||
+      email === "" ||
+      !licencesBack ||
+      !licencesfront ||
+      car === "" ||
+      !idBack ||
+      !idFront ||
+      !fesh ||
+      !captainPic
+    ) {
+      swal("empty inputs");
+    } else {
+      console.log(
+        name,
+        phone,
+        idNumber,
+        email,
+        licencesfront,
+        licencesBack,
+        idFront,
+        car,
+        idBack,
+        fesh,
+        captainPic,
+        brithDate.toString()
+      );
+      setLodingMs("Creating captain account...");
+      setOpen2(true);
+      addCaptain({
+        name,
+        phone,
+        idNumber,
+        email,
+        car,
+        birthDate: brithDate.toString(),
+      }).then(async (res) => {
+        if (res.data.id) {
+          const id = res.data.id;
+          var idFrontUrl = "";
+          var idBackUrl = "";
+          var capPicUrl = "";
+          var feshUrl = "";
+          var licenceFrontUrl = "";
+          var licenceBackUrl = "";
+          if (idFront) {
+            setLodingMs("Uploading ID image ( Front )...");
+            const ex = idFront.type.split("/");
+            idFrontUrl = await (
+              await storage
+                .ref()
+                .child(`idsPics/${id}_front.${ex[1]}`)
+                .put(idFront)
+            ).ref.getDownloadURL();
+          }
+          if (idBack) {
+            const ex = idBack.type.split("/");
+            setLodingMs("Uploading ID image ( Back )...");
+            idBackUrl = await (
+              await storage
+                .ref()
+                .child(`idsPics/${id}_back.${ex[1]}`)
+                .put(idBack)
+            ).ref.getDownloadURL();
+          }
+          if (captainPic) {
+            const ex = captainPic.type.split("/");
+            setLodingMs("Uploading Captain's  Image ...");
+            capPicUrl = await (
+              await storage
+                .ref()
+                .child(`personalPics/${id}.${ex[1]}`)
+                .put(captainPic)
+            ).ref.getDownloadURL();
+          }
+          if (fesh) {
+            const ex = fesh.type.split("/");
+            setLodingMs("Uploading Captain's fesh iamge ...");
+            feshUrl = await (
+              await storage.ref().child(`feshPics/${id}.${ex[1]}`).put(fesh)
+            ).ref.getDownloadURL();
+          }
+          if (licencesfront) {
+            const ex = licencesfront.type.split("/");
+            setLodingMs("Uploading  licenes image (Front)...");
+            licenceFrontUrl = await (
+              await storage
+                .ref()
+                .child(`licencesPics/${id}_front.${ex[1]}`)
+                .put(licencesfront)
+            ).ref.getDownloadURL();
+          }
+          if (licencesBack) {
+            const ex = licencesBack.type.split("/");
 
-    console.log(
-      name,
-      phone,
-      idNumber,
-      email,
-      licencesfront,
-      licencesBack,
-      idFront,
-      car,
-      idBack,
-      fesh,
-      captainPic,
-      brithDate.toString()
-    );
-    setLodingMs("Creating captain account...");
-    setOpen2(true);
-    addCaptain({
-      name,
-      phone,
-      idNumber,
-      email,
-      car,
-      birthDate: brithDate.toString(),
-    }).then(async (res) => {
-      if (res.data.id) {
-        const id = res.data.id;
-        var idFrontUrl = "";
-        var idBackUrl = "";
-        var capPicUrl = "";
-        var feshUrl = "";
-        var licenceFrontUrl = "";
-        var licenceBackUrl = "";
-        if (idFront) {
-          setLodingMs("Uploading ID image ( Front )...");
-          const ex = idFront.type.split("/");
-          idFrontUrl = await (
-            await storage
-              .ref()
-              .child(`idsPics/${id}_front.${ex[1]}`)
-              .put(idFront)
-          ).ref.getDownloadURL();
+            setLodingMs("Uploading  licenes image (Back)...");
+            licenceBackUrl = await (
+              await storage
+                .ref()
+                .child(`licencesPics/${id}_back.${ex[1]}`)
+                .put(licencesBack)
+            ).ref.getDownloadURL();
+          }
+          await firestore.collection("captains").doc(res.data.id).update({
+            idFrontUrl,
+            idBackUrl,
+            capPicUrl,
+            feshUrl,
+            licenceFrontUrl,
+            licenceBackUrl,
+          });
+          setOpen2(false);
+          swal({
+            icon: "success",
+            title: "Captain Created !",
+            text: ` The password is [ ${res.data.password} ] `,
+            button: {
+              text: "ok!",
+              closeModal: false,
+            },
+            closeOnClickOutside: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          console.log(res.data);
+          swal("error");
         }
-        if (idBack) {
-          const ex = idBack.type.split("/");
-          setLodingMs("Uploading ID image ( Back )...");
-          idBackUrl = await (
-            await storage.ref().child(`idsPics/${id}_back.${ex[1]}`).put(idBack)
-          ).ref.getDownloadURL();
-        }
-        if (captainPic) {
-          const ex = captainPic.type.split("/");
-          setLodingMs("Uploading Captain's Pictuer ...");
-          capPicUrl = await (
-            await storage
-              .ref()
-              .child(`personalPics/${id}.${ex[1]}`)
-              .put(captainPic)
-          ).ref.getDownloadURL();
-        }
-        if (fesh) {
-          const ex = fesh.type.split("/");
-          setLodingMs("Uploading Captain's fesh iamge ...");
-          feshUrl = await (
-            await storage.ref().child(`feshPics/${id}.${ex[1]}`).put(fesh)
-          ).ref.getDownloadURL();
-        }
-        if (licencesfront) {
-          const ex = licencesfront.type.split("/");
-          setLodingMs("Uploading  licenes image (Front)...");
-          licenceFrontUrl = await (
-            await storage
-              .ref()
-              .child(`licencesPics/${id}_front.${ex[1]}`)
-              .put(licencesfront)
-          ).ref.getDownloadURL();
-        }
-        if (licencesBack) {
-          const ex = licencesBack.type.split("/");
-
-          setLodingMs("Uploading  licenes image (Back)...");
-          licenceBackUrl = await (
-            await storage
-              .ref()
-              .child(`licencesPics/${id}_back.${ex[1]}`)
-              .put(licencesBack)
-          ).ref.getDownloadURL();
-        }
-        await firestore.collection("captains").doc(res.data.id).update({
-          idFrontUrl,
-          idBackUrl,
-          capPicUrl,
-          feshUrl,
-          licenceFrontUrl,
-          licenceBackUrl,
-        });
-        setOpen2(false);
-        swal({
-          icon: "success",
-          title: "Captain Created !",
-          text: ` The password is [ ${res.data.password} ] `,
-          button: {
-            text: "ok!",
-            closeModal: false,
-          },
-          closeOnClickOutside: false,
-        }).then(() => {
-          window.location.reload();
-        });
-      } else {
-        console.log(res.data);
-        swal("error");
-      }
-    });
-    let batotFInish = false;
-    if (batotFInish) {
-      setOpenLoading(false);
-      swal(`Captain Created ${newCaptain.name} `);
+      });
     }
   };
   return (
@@ -523,7 +481,9 @@ export default function SimpleModal() {
           </FormControl>
 
           <FormControl className={classes.formControl}>
-            <InputLabel id="demo-simple-select-label">Select The Car</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              Select The Car
+            </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -532,15 +492,14 @@ export default function SimpleModal() {
                 setCar(e.target.value);
               }}
             >
-              <MenuItem value={"بط528"}>كيا سيراتو ب ط 528</MenuItem>
-              <MenuItem value={"سض558"}>بي واي دي اف 3 س ض 558</MenuItem>
-              <MenuItem value={"صع515"}>شيفيروليه اوبترا ص ع 515</MenuItem>
+              {cars.map((car) => {
+                return <MenuItem value={car.id}>{`${car.carNumber}`}</MenuItem>;
+              })}
             </Select>
           </FormControl>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-around">
-              <KeyboardDatePicker
-                disableToolbar
+              <DatePicker
                 variant="inline"
                 format="MM/dd/yyyy"
                 margin="normal"
@@ -554,15 +513,7 @@ export default function SimpleModal() {
                   "aria-label": "change date",
                 }}
               />
-            </Grid>
-          </MuiPickersUtilsProvider>
-
-
-
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-around">
-              <KeyboardDatePicker
-                disableToolbar
+              <DatePicker
                 variant="inline"
                 format="MM/dd/yyyy"
                 margin="normal"
@@ -585,7 +536,7 @@ export default function SimpleModal() {
           label="Upload Captain Pic"
           buttonText="Captain Pic"
           onChange={captainPicUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -596,7 +547,7 @@ export default function SimpleModal() {
           buttonText="ID Front Face"
           label="Upload ID Front IMG"
           onChange={frontIDUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -608,7 +559,7 @@ export default function SimpleModal() {
           label="Upload ID Back IMG"
           buttonText="ID Back Face"
           onChange={backIDUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -620,7 +571,7 @@ export default function SimpleModal() {
           label="Upload Licences Front IMG"
           buttonText="Licences Front Face"
           onChange={licencesfrontUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -632,7 +583,7 @@ export default function SimpleModal() {
           label="Upload Licences Back IMG"
           buttonText="Licences Back Face"
           onChange={feshUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -643,7 +594,7 @@ export default function SimpleModal() {
           label="Upload Criminal newspaper IMG"
           buttonText="Criminal newspaper IMG"
           onChange={licencesBackUploader}
-          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg"]}
+          imgExtension={[".jpg", ".gif", ".png", ".gif", ".jpeg", ".jfif"]}
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
@@ -660,20 +611,7 @@ export default function SimpleModal() {
           Add New Captain
         </Button>
       </form>
-
-
-
-      <div style={{ height: 400, width: "100%" }}>
-        {/*
-         <DataList
-          datatoshow={rows}
-          columns={columns}
-          pageSize={5}
-          checkboxSelection
-        />
-       */}
-        {renderTable(rows)}
-      </div>
+      <CaptainsTable></CaptainsTable>
       <Backdrop
         className={classes.backdrop}
         open={openLoading}
