@@ -42,6 +42,7 @@ import { confirmAlert } from "react-confirm-alert";
 import DateFnsUtils from "@date-io/date-fns";
 import { isFuture } from "date-fns/esm";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import TablePagination from '@material-ui/core/TablePagination';
 const functions = config.app().functions("europe-west3");
 const storage = config.storage();
 const deleteCaptain = functions.httpsCallable("deleteCaptain");
@@ -65,12 +66,26 @@ const StyledTableRow = withStyles((theme) => ({
     },
   },
 }))(TableRow);
+
 const CaptainsTable = (props) => {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   const renderTable = (data) => {
+
+
     return (
       <Fragment>
         <Paper style={{ overflowX: "scroll" }}>
-          <Table>
+          <Table stickyHeader  >
             <TableHead>
               <TableRow>
                 <StyledTableCell align="center">NO.</StyledTableCell>
@@ -86,7 +101,7 @@ const CaptainsTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((record, index) => {
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((record, index) => {
                 return (
                   <StyledTableRow key={record.id + Math.random()}>
                     <StyledTableCell
@@ -153,7 +168,7 @@ const CaptainsTable = (props) => {
                             },
                             {
                               label: "No",
-                              onClick: () => {},
+                              onClick: () => { },
                             },
                           ],
                         });
@@ -168,6 +183,15 @@ const CaptainsTable = (props) => {
               })}
             </TableBody>
           </Table>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={data.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </Paper>
       </Fragment>
     );
