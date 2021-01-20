@@ -1,13 +1,58 @@
 .add-captain-form-header
+
 {
     background-color: rgba(10, 1, 10, 0.2);
     padding: 10px;
     border-radius: 30px;
 }
-.add-captain-form
+.add-captain-form  
 {
     padding: 50px;
     margin: 100px auto;
     border: 2px solid rebeccapurple;
     border-radius: 60px;
+}
+.captain-profile-container
+{
+    
+    width: 80%;
+    margin: 100px auto;
+}
+
+.captain-profile-container h2
+{
+    
+   font-size: 1.9em;
+   font-weight: bolder;
+   color:  rebeccapurple;
+
+}
+.captain-profile-container  p
+{
+    font-size: 1.6em;
+    font-weight: bolder;
+   
+    color:  black;
+    background-color: rgba(255  , 255, 255, 0.7);
+   
+    text-align: left;
+
+    line-height: 4vh;
+    padding: 20px ;
+}
+.captain-profile-container  p:hover
+{
+    color:  whitesmoke;
+    background-color: rgba(10, 1, 10, 0.8);
+   
+}
+.captain-profile-container  p span
+{
+  
+    margin: 0 auto;
+
+ 
+}
+.captain-profile-imgs p {
+    text-align: center !important
 }
