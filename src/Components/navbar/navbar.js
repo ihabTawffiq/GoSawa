@@ -25,7 +25,7 @@ function Nav(props) {
   return (
     <nav>
 
-      <div className="nav-wrapper">
+      <div className="nav-wrapper  blue darken-4 ">
         <Link to="/" className="brand-logo">
           GO SAWA
         </Link>
@@ -70,10 +70,10 @@ function Nav(props) {
               </Link>
             </li>
           ) : (
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-            )}
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+          )}
         </ul>
       </div>
 
