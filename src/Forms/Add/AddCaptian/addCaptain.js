@@ -432,7 +432,7 @@ export default function SimpleModal() {
   return (
     <div>
       <form
-        className={(classes.root, "add-captain-form")}
+        className={(classes.root, "add-captain-form add-captain-form2")}
         noValidate
         autoComplete="off"
         style={{}}

@@ -246,7 +246,7 @@ export default function SimpleModal() {
                             },
                             {
                               label: "No",
-                              onClick: () => {},
+                              onClick: () => { },
                             },
                           ],
                         });
@@ -293,7 +293,7 @@ export default function SimpleModal() {
   const body = (
     <div className="container">
       <Grid container direction="column" justify="center" alignItems="center">
-        <form className="login-form" noValidate autoComplete="off">
+        <form className="login-form add-route" noValidate autoComplete="off">
           <Grid
             item
             container
@@ -606,7 +606,7 @@ export default function SimpleModal() {
                                 },
                                 {
                                   label: "No",
-                                  onClick: () => {},
+                                  onClick: () => { },
                                 },
                               ],
                             });
