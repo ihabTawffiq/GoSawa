@@ -35,7 +35,7 @@
   to {
     transform: rotate(360deg);
   }
-}
+}/*
 h1 ,h2 ,h3 ,h4 ,h5 ,h6 ,p ,.MuiInput-input ,label
 {
   color: white ;
@@ -47,4 +47,4 @@ h1 ,h2 ,h3 ,h4 ,h5 ,h6 ,p ,.MuiInput-input ,label
 .add-route .MuiInput-input ,label
 {
   color: black  !important;
-}
+}*/

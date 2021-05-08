@@ -598,7 +598,7 @@ export default function SimpleModal() {
           maxFileSize={5242880}
           fileContainerStyle={{ background: "rgba(0,0,0,0.3)" }}
           withPreview={true}
-          singleImage={true}
+        //singleImage={true}
         />
 
         <Button
