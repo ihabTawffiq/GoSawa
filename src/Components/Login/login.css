@@ -1,17 +1,37 @@
-.container
-{
-    margin-top: 100px ;
+body{
+    background-color: rgb(5, 11, 34);
+}
+
+.container{
     width: 100%;
-    border: 0px solid black;
+    background-color: rgb(5, 11, 34);
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
 .login-form
 {
-    background-color: antiquewhite;
-    min-width: 360px;
-    min-height: 60vh;
-    
-    padding: 150px 20px 50px 20px;
+    background-color: white;
+    margin-top: 2rem;
+    width: 30%;
+    border-radius: 20px;
+    padding-bottom: 1rem;
 }
+
+.form-header-TM{
+    font-weight: bold;
+    font-size: 280%
+}
+
+.MuiInputBase-input{
+    border-bottom: none !important;
+    outline: none;
+}
+
+.MuiInputBase-input:focus{
+    outline: none;   
+}
+
 .add-captain-form
 {
     margin: 20px auto;
@@ -22,6 +42,7 @@
     background-position: center;
     background-size: cover;
 }
+
 @media only screen and (max-width: 600px) {
     .add-captain-form
     {
@@ -29,5 +50,10 @@
     padding: 30px;
 
     width:80%
+    }
+
+    .login-form{
+        margin-top: 4rem;
+        width: 80%;
     }
   }
