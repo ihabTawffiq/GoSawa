@@ -4,11 +4,27 @@
     display: flex;
     justify-content: space-between;
     margin: .5rem 9rem;
+    flex-direction: row  ;
+}
+#nav-mobile{
+    display: flex;
+    display: inline-flex;
+    flex-basis: auto;
+    flex-wrap: wrap;
+
 }
 
 .navBar-links-TM{
     color: white;
+    flex-direction: column  ;
+    flex: 4;
+    margin: 50px;
+    
 }
+.navBar-links-TM:hover{
+    color: #039be5;
+}
+
 
 .brand-logo{
     margin-top: .7rem;

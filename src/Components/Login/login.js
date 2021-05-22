@@ -22,14 +22,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function BasicTextFields(props) {
-  
+
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
     AOS.init({
-      duration : 2000
+      duration: 2000
     });
   }, []);
 
@@ -46,11 +46,11 @@ function BasicTextFields(props) {
             spacing="6"
           >
             <Grid item>
-              <h1 className = "form-header-TM" data-aos="fade-left">Login</h1>
+              <h1 className="form-header-TM" data-aos="fade-left">Login</h1>
             </Grid>
             <Grid item>
               <TextField
-                placeholder = "Enter Your Email"
+                placeholder="Enter Your Email"
                 className={classes.margin}
                 name="username"
                 id="loginUserName"
@@ -69,7 +69,7 @@ function BasicTextFields(props) {
             </Grid>
             <Grid item>
               <TextField
-              placeholder = "Enter Your Password"
+                placeholder="Enter Your Password"
                 className={classes.margin}
                 name="password"
                 id="loginPassword"
