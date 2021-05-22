@@ -1,6 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
+import "./navbar.css";
+import Logo from '../../goSawa.jpg'
 import { signOut } from "../../server/actions/authActions";
 import {
   BrowserRouter as Router,
@@ -23,29 +25,28 @@ const useStyles = makeStyles((theme) => ({
 function Nav(props) {
   const { auth, admin, owner, SignOut } = props;
   return (
-    <nav>
-
-      <div className="nav-wrapper  blue darken-4 ">
+      <div className="navBar-container">
         <Link to="/" className="brand-logo">
-          GO SAWA
+          <img className = "logo-image-TM" src = {Logo}/>
+          GOSAWA
         </Link>
-        <ul id="nav-mobile" className="right ">
+        <ul id="nav-mobile">
           {owner ? (
             <li>
-              <Link to="/add-admin">Add Admin</Link>
+              <Link to="/add-admin" className="navBar-links-TM">Add Admin</Link>
             </li>
           ) : null}
 
           {owner || admin ? (
             <li>
-              <Link to="/add-route">Add Route</Link>
+              <Link to="/add-route" className="navBar-links-TM">Add Route</Link>
             </li>
 
           ) : null}
 
           {owner || admin ? (
             <li>
-              <Link to="/add-captain">Add Captain</Link>
+              <Link to="/add-captain" className="navBar-links-TM">Add Captain</Link>
             </li>
 
           ) : null}
@@ -53,14 +54,16 @@ function Nav(props) {
 
           {owner || admin ? (
             <li>
-              <Link to="/add-car">Add Car</Link>
+              <Link to="/add-car" className="navBar-links-TM">Add Car</Link>
             </li>
 
           ) : null}
 
           {auth.uid ? (
             <li>
-              <Link to="/#"
+              <Link 
+                className="navBar-links"
+                to="/#"
                 onClick={(e) => {
                   e.preventDefault();
                   SignOut();
@@ -71,13 +74,11 @@ function Nav(props) {
             </li>
           ) : (
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login" className="navBar-links-TM">Login</Link>
             </li>
           )}
         </ul>
       </div>
-
-    </nav>
   );
 }
 const mapDispatchToProps = (dispatch) => {
