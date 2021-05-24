@@ -8,21 +8,10 @@
 }
 #nav-mobile{
     display: flex;
-    display: inline-flex;
+    flex-direction: column;
     flex-basis: auto;
     flex-wrap: wrap;
 
-}
-
-.navBar-links-TM{
-    color: white;
-    flex-direction: column  ;
-    flex: 4;
-    margin: 50px;
-    
-}
-.navBar-links-TM:hover{
-    color: #039be5;
 }
 
 
@@ -40,8 +29,81 @@
     border-radius: 50%;
 }
 
+
+.MuiPaper-root{
+    background-color: rgb(26, 26, 97) !important;
+    width: 18%;
+}
+
+.brandLogo-sidebar-TM{
+    font-size: 160%;
+    font-weight: bold;
+    color: white;
+    margin: 2rem 0rem;
+}
+
+.brandLogo-sidebar-TM>img{
+    width: 15%;
+    margin: -0.5rem .4em;
+    border-radius: 50%;
+}
+
+.sideBar-container{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+
+.navBar-links-TM>li{
+    margin: 20px 0px;
+}
+.navBar-links-TM:hover{
+    background-color: rgb(5, 11, 34);
+    transition: .5s ease-in-out;
+}
+
+.openDrawer-button-TM{
+    color: white;
+    margin-top: .4rem;
+    padding: .5rem;
+    border-radius: 5px;
+}
+
+.openDrawer-button-TM:hover{
+    cursor: pointer;
+    background-color: rgba(7, 7, 95, 0.4);
+    transition: .5s ease-in-out;
+}
+
+.MuiSvgIcon-root {
+    font-size: 2.3rem !important;
+}
+
+
 @media only screen and (max-width: 600px) {
     .navBar-container{
         margin: .5rem 2rem;
+    }
+
+    .MuiPaper-root{
+        background-color: rgb(26, 26, 97) !important;
+        width: 40%;
+    }
+
+    .brand-logo{
+        margin-top: .7rem;
+        margin-right: 2rem;
+        color: white;
+        font-size: 180%;
+        width: 20%;
+        display: flex;
+    }
+    
+    .brand-logo>img{
+        width: 45%;
+        height: 70%;
+        margin: .3rem .4em;
+        border-radius: 50%;
     }
 }
