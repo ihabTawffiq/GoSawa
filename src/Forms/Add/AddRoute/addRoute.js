@@ -151,6 +151,8 @@ export default function SimpleModal() {
       setRoutes(routesList);
     });
   }, []);
+
+  // table boody
   const renderTable = (data) => {
     return (
       <Fragment>
@@ -266,6 +268,7 @@ export default function SimpleModal() {
     );
   };
 
+  // add new route function
   const handelAddRoute = (e) => {
     e.preventDefault();
 
@@ -280,6 +283,7 @@ export default function SimpleModal() {
     );
   };
 
+  // add new stations for route function
   const handelAddStations = (pointName, pointLocation, id) => {
     setOpenLoading(true);
     addRoutStation({ pointName, pointLocation, id }).then((res) => {
@@ -290,10 +294,12 @@ export default function SimpleModal() {
       }
     });
   };
+
+  // whole boody to contain all return data
   const body = (
     <div className="container">
       <Grid container direction="column" justify="center" alignItems="center">
-        <form className="login-form add-route" noValidate autoComplete="off">
+        <form className="add-route" noValidate autoComplete="off">
           <Grid
             item
             container
